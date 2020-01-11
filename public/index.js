@@ -165,11 +165,15 @@ console.log(actors);
 //PART 1
 var pt1 = [] //Result part 1.
 
-function dayDiff(d1, d2)
-{
-  d1 = d1.getTime() / 86400000;
-  d2 = d2.getTime() / 86400000;
-  return new Number(d2 - d1).toFixed(0);
+function parseDate(str) {
+  var mdy = str.split('-');
+  return new Date(mdy[0], mdy[1], mdy[2]);
+}
+
+function datediff(first, second) {
+  // Take the difference between the dates and divide by milliseconds per day.
+  // Round to nearest whole number to deal with DST.
+  return Math.round((second-first)/(1000*60*60*24));
 }
 
 rentals.forEach(element => {
@@ -177,8 +181,10 @@ rentals.forEach(element => {
   rental.rentalid = element.carId;
   rental.rentaldriver = element.driver;
   var value1 = cars.find(x => x.id === element.carId);
-  var prix = value1.pricePerDay * (new Date(rentals.find(x => x.carId === element.carId).pickupDate.split('-')[2],rentals.find(x => x.carId === element.carId).pickupDate.split('-')[1],rentals.find(x => x.carId === element.carId).pickupDate.split('-')[0]).getDate()
-    - new Date(rentals.find(x => x.carId === element.carId).returnDate.split('-')[2],rentals.find(x => x.carId === element.carId).returnDate.split('-')[1],rentals.find(x => x.carId === element.carId).returnDate.split('-')[0]).getDate())
+  var first_day = parseDate(rentals.find(x => x.carId === element.carId).pickupDate);
+  var last_day = parseDate(rentals.find(x => x.carId === element.carId).returnDate);
+  var nb_days = datediff(first_day, last_day) + 1;
+  var prix = value1.pricePerDay * nb_days
     + value1.pricePerKm * rentals.find(x => x.carId === element.carId).distance;
   rental.rentalpricing = prix;
   pt1.push(rental);
@@ -197,8 +203,9 @@ rentals.forEach(element => {
 
   var price2 = 0;
   var value1 = cars.find(x => x.id === element.carId);
-  var value2 = (new Date(rentals.find(x => x.carId === element.carId).pickupDate.split('-')[2],rentals.find(x => x.carId === element.carId).pickupDate.split('-')[1],rentals.find(x => x.carId === element.carId).pickupDate.split('-')[0]).getDate()
-  - new Date(rentals.find(x => x.carId === element.carId).returnDate.split('-')[2],rentals.find(x => x.carId === element.carId).returnDate.split('-')[1],rentals.find(x => x.carId === element.carId).returnDate.split('-')[0]).getDate());
+  var first_day = parseDate(rentals.find(x => x.carId === element.carId).pickupDate);
+  var last_day = parseDate(rentals.find(x => x.carId === element.carId).returnDate);
+  var value2 = datediff(first_day, last_day) + 1;
   if(value2 < 1)
   {
     price2 = value1.pricePerDay * value2 + value1.pricePerKm * rentals.find(x => x.carId === element.carId).distance;
@@ -227,7 +234,27 @@ rentals.forEach(element => {
 
 console.log(pt2)
 
+//PART 3
 
+var pt3 = [];
+pt2.forEach(element => {
+  var cover_cost = {};
+  var commission = element.rentalpricing * 0.3;
+  console.log(commission);
+  cover_cost.rentalid = element.rentalid;
+  cover_cost.commission = commission;
+  cover_cost.insurance = commission / 2;
+  var first_day = parseDate(rentals.find(x => x.carId === element.rentalid).pickupDate);
+  var last_day = parseDate(rentals.find(x => x.carId === element.rentalid).returnDate);
+  var nb_days = datediff(first_day, last_day) + 1;
+  cover_cost.treasury = nb_days;
+  cover_cost.virtuo = commission - cover_cost.insurance - cover_cost.treasury;
+  pt3.push(cover_cost);
+});
+
+console.log(pt3);
+
+/*
 function fetchPrice(id2) {
   var test = (cars).find(element => element.id==id2);
   return [test.pricePerDay,test.pricePerKm]
@@ -241,3 +268,4 @@ rentals.forEach(element => {
   element.price = duree * fetchPrice(element.carId)[0] + element.distance * fetchPrice(element.carId)[1];
   console.log(element.price)
 });
+*/
