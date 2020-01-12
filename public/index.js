@@ -273,8 +273,54 @@ pt2.forEach(element => {
 console.log("Part 4:", pt4);
 
 //PART 5
+var pt5 = [];
+var who = ["driver", "partner", "insurance", "treasury", "virtuo"];
+var type = ["debit", "credit", "credit" , "credit" , "credit"];
 
+for(let index = 0; index < pt4.length; index++)
+{
+  var pay = {};
+  pay.rentalcarid = pt2[index].rentalcarid;
+  var payment = [];
+  for(let index2 = 0; index2 < 5; index2++)
+  {
+    var payment_details = {};
+    payment_details.who = who[index2];
+    payment_details.type = type[index2];
+    if(index2 == 0)
+    {
+      payment_details.amount = pt4[index].rentalpricing;
+    }
+    if(index2 == 1)
+    {
+      payment_details.amount = pt4[index].rentalpricing - pt3[index].commission;
+    }
+    if(index2 == 2)
+    {
+      payment_details.amount = pt3[index].insurance;
+    }
+    if(index2 == 3)
+    {
+      payment_details.amount = pt3[index].treasury;
+    }
+    if(index2 == 4)
+    {
+      if(pt4[index].options.deductibleReduction)
+      {
+        payment_details.amount = pt3[index].virtuo + pt4[index].rentalpricing - pt2[index].rentalpricing;
+      }
+      else
+      {
+        payment_details.amount = pt3[index].virtuo;
+      }
+    }
+    payment.push(payment_details);
+  }
+  pay.payment = payment;
+  pt5.push(pay);
+}
 
+console.log("Part 5:", pt5);
 /*
 function fetchPrice(id2) {
   var test = (cars).find(element => element.id==id2);
