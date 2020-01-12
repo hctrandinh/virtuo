@@ -178,7 +178,7 @@ function datediff(first, second) {
 
 rentals.forEach(element => {
   var rental = {};
-  rental.rentalid = element.carId;
+  rental.rentalcarid = element.carId;
   rental.rentaldriver = element.driver;
   var value1 = cars.find(x => x.id === element.carId);
   var first_day = parseDate(rentals.find(x => x.carId === element.carId).pickupDate);
@@ -190,7 +190,7 @@ rentals.forEach(element => {
   pt1.push(rental);
 });
 
-console.log(pt1);
+console.log("Part 1:", pt1);
 
 //PART2
 
@@ -198,7 +198,7 @@ var pt2 = [] //Result part 1.
 
 rentals.forEach(element => {
   var rental = {};
-  rental.rentalid = element.carId;
+  rental.rentalcarid = element.carId;
   rental.rentaldriver = element.driver;
 
   var price2 = 0;
@@ -232,7 +232,7 @@ rentals.forEach(element => {
   }
 });
 
-console.log(pt2)
+console.log("Part 2:", pt2)
 
 //PART 3
 
@@ -240,19 +240,40 @@ var pt3 = [];
 pt2.forEach(element => {
   var cover_cost = {};
   var commission = element.rentalpricing * 0.3;
-  console.log(commission);
-  cover_cost.rentalid = element.rentalid;
+  cover_cost.rentalcarid = element.rentalcarid;
   cover_cost.commission = commission;
   cover_cost.insurance = commission / 2;
-  var first_day = parseDate(rentals.find(x => x.carId === element.rentalid).pickupDate);
-  var last_day = parseDate(rentals.find(x => x.carId === element.rentalid).returnDate);
+  var first_day = parseDate(rentals.find(x => x.carId === element.rentalcarid).pickupDate);
+  var last_day = parseDate(rentals.find(x => x.carId === element.rentalcarid).returnDate);
   var nb_days = datediff(first_day, last_day) + 1;
   cover_cost.treasury = nb_days;
   cover_cost.virtuo = commission - cover_cost.insurance - cover_cost.treasury;
   pt3.push(cover_cost);
 });
 
-console.log(pt3);
+console.log("Part 3:", pt3);
+
+//PART 4
+var pt4 = [];
+pt2.forEach(element => {
+  var deductible = {};
+  deductible.rentalcarid = element.rentalcarid;
+  deductible.rentaldriver = element.rentaldriver;
+  deductible.rentalpricing = element.rentalpricing;
+  deductible.options = rentals.find(x => x.carId === element.rentalcarid).options;
+  if(rentals.find(x => x.carId === element.rentalcarid).options.deductibleReduction)
+  {
+    var first_day = parseDate(rentals.find(x => x.carId === element.rentalcarid).pickupDate);
+    var last_day = parseDate(rentals.find(x => x.carId === element.rentalcarid).returnDate);
+    var nb_days = datediff(first_day, last_day) + 1;
+    deductible.rentalpricing += nb_days * 4;
+  }
+  pt4.push(deductible);
+})
+console.log("Part 4:", pt4);
+
+//PART 5
+
 
 /*
 function fetchPrice(id2) {
