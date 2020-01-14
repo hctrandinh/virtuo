@@ -321,6 +321,7 @@ for(let index = 0; index < pt4.length; index++)
 }
 
 console.log("Part 5:", pt5);
+
 /*
 function fetchPrice(id2) {
   var test = (cars).find(element => element.id==id2);
